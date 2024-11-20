@@ -67,16 +67,7 @@ int AssembyDatas(int8_t voltageData, int8_t currentData, int8_t powerData, int8_
 	int frame, middleFrame; 
 
 	//-- preparation of frame --// 
-	//-- variant 1) LSB on right 
-	/*
-	frame = (voltageData << 24) & 0xFF000000;			// unwrapping of 24bits and masking -> MSB part 	
-	middleFrame = (currentData << 16) & 0x00FF0000; 
-	frame = frame | middleFrame;						// update datas with voltage and cuurent   
-	middleFrame = (powerData << 8) & 0x0000FF00; 
-	frame = frame | middleFrame;						// update datas with voltage, current and power 
-	middleFrame = resistorData & 0x000000FF; 
-	frame = frame | middleFrame;						// update datas with voltage, current, power, resistor 
-	*/
+	
 	//-- variante 2) LSB on left
 	
 	frame = (resistorData << 24) & 0xFF000000;			// unwrapping and masking -> MSB part 	
@@ -105,14 +96,14 @@ int AssembyDatas(int8_t voltageData, int8_t currentData, int8_t powerData, int8_
 ----------------------------------------------------------------------------------- */
 void DatasCutting(int frame)
 {
-	int8_t voltage = frame;
-	int8_t current = frame >> 8;
-	int8_t puissance = frame >> 16;
+	int8_t voltage = frame; // my LSB is on the left so i didn't need to use the binary offset
+	int8_t current = frame >> 8; // to read the information for current i have to offset 8 digit on frame
+	int8_t puissance = frame >> 16; // same but the the offset is set to 16
 	int8_t resistor = frame >> 24;
 
 
 	//-- display the different frame value --//
-	printf("-- valeur voltage :%d  \n",voltage );
+	printf("-- valeur voltage :%d  \n",voltage ); // %d for the print because my format is standardized format
 	printf("-- valeur current :%d \n",current );
 	printf("-- valeur power : %d \n",puissance );
 	printf("-- valeur resistor : %d \n",resistor );
