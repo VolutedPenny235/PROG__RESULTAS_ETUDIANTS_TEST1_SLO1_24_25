@@ -76,17 +76,7 @@ int AssembyDatas(int8_t voltageData, int8_t currentData, int8_t powerData, int8_
 	middleFrame = resistorData & 0x000000FF; 
 	frame = frame | middleFrame;						// update datas with voltage, current, power, resistor 
 	
-	//-- variante 2) LSB on left
-	/*
-	frame = (resistorData << 24) & 0xFF000000;			// unwrapping and masking -> MSB part 	
-	middleFrame = (powerData << 16) & 0x00FF0000; 
-	frame = frame | middleFrame;						// update datas with voltage and cuurent   
-	middleFrame = (currentData << 8) & 0x0000FF00; 
-	frame = frame | middleFrame;						// update datas with voltage, current and power 
-	middleFrame = voltageData & 0x000000FF; 
-	frame = frame | middleFrame;						// update datas with voltage, current, power, resistor 
-	*/
-	
+
 	return frame; 
 }
 
@@ -104,10 +94,19 @@ int AssembyDatas(int8_t voltageData, int8_t currentData, int8_t powerData, int8_
 ----------------------------------------------------------------------------------- */
 void DatasCutting(int frame)
 {
+	//-- Déclaration de variables locales --//
+	int8_t tension = 0, courant = 0, puissance = 0, resistance = 0;
 
+	//-- découpage de frame --//
+	tension = (frame & 0xFF000000) >> 24;        //Masquage de la valeur de la tension sur la frame et décalage de 24 bits
+	courant = (frame & 0x00FF0000) >> 16;		 //Masquage de la valeur de la courant sur la frame et décalage de 16 bits
+	puissance = (frame & 0x0000FF00) >> 8;		 //Masquage de la valeur de la puissance sur la frame et décalage de 8 bits
+	resistance = frame & 0x000000FF;			 //Masquage de la valeur de la résistance sur la frame
 	//-- display the different frame value --//
-	printf("-- valeur voltage :  \n", );
-	printf("-- valeur current : \n", );
-	printf("-- valeur power :  \n", );
-	printf("-- valeur resistor :  \n", );
+	printf("-- valeur voltage :  %d \n", tension);    //Affichage de la valeur de la tension
+	printf("-- valeur current : %d \n", courant);     //Affichage de la valeur du courant
+	printf("-- valeur power : %d \n", puissance);     //Affichage de la valeur de la puissance
+	printf("-- valeur resistor : %d \n", resistance); //Affichage de la valeur de la résistance
+
+	return(0);
 }
